@@ -1,0 +1,87 @@
+-- Create the database 
+CREATE DATABASE StudyHouse 
+-- Use the database 
+USE StudyHouse 
+-- Create the `staff_shift` table 
+CREATE TABLE staff_shift ( 
+shift_id INT PRIMARY KEY, 
+shift_date DATE NOT NULL, 
+start_time TIME(4) NOT NULL, 
+end_time TIME(4) NOT NULL, 
+CHECK (start_time < end_time) 
+) 
+-- Create the `customer` table 
+CREATE TABLE customer ( 
+cus_id INT PRIMARY KEY, 
+first_name VARCHAR(50) NOT NULL, 
+last_name VARCHAR(50) NOT NULL, 
+email VARCHAR(100) UNIQUE NOT NULL 
+) 
+-- Create the `staff` table 
+CREATE TABLE staff ( 
+staff_id INT PRIMARY KEY, 
+gender VARCHAR(10) CHECK (gender IN ('Male', 'Female')), 
+email VARCHAR(50) UNIQUE NOT NULL, 
+shift_id INT, 
+FOREIGN KEY (shift_id) REFERENCES staff_shift(shift_id) 
+) 
+-- Create the `service` table 
+CREATE TABLE service ( 
+staff_id INT, 
+cus_id INT, 
+PRIMARY KEY (staff_id, cus_id), 
+FOREIGN KEY (staff_id) REFERENCES staff(staff_id), 
+FOREIGN KEY (cus_id) REFERENCES customer(cus_id) 
+) 
+-- Create the `areas_and_rooms` table 
+CREATE TABLE areas_and_rooms ( 
+AreaNum INT PRIMARY KEY, 
+capacity INT NOT NULL CHECK (capacity > 0), 
+availability BIT NOT NULL, 
+type VARCHAR(50) NOT NULL 
+) 
+-- Create the `works_at` table 
+CREATE TABLE works_at ( 
+staff_id INT, 
+AreaNum INT, 
+PRIMARY KEY (staff_id, AreaNum), 
+FOREIGN KEY (staff_id) REFERENCES staff(staff_id), 
+FOREIGN KEY (AreaNum) REFERENCES areas_and_rooms(AreaNum) 
+) 
+-- Create the `book` table 
+CREATE TABLE book ( 
+cus_id INT, 
+AreaNum INT, 
+PRIMARY KEY (cus_id, AreaNum), 
+FOREIGN KEY (cus_id) REFERENCES customer(cus_id), 
+FOREIGN KEY (AreaNum) REFERENCES areas_and_rooms(AreaNum) 
+) 
+-- Create the `M_staff` table 
+CREATE TABLE M_staff ( 
+staff_id INT PRIMARY KEY, 
+phone VARCHAR(15) UNIQUE NOT NULL, 
+FOREIGN KEY (staff_id) REFERENCES staff(staff_id) 
+) 
+-- Create the `M_customer` table 
+CREATE TABLE M_customer ( 
+cus_id INT PRIMARY KEY, 
+phone VARCHAR(10) UNIQUE NOT NULL, 
+FOREIGN KEY (cus_id) REFERENCES customer(cus_id) 
+) 
+-- Create the `workshops_events` table 
+CREATE TABLE workshops_events ( 
+event_id INT PRIMARY KEY, 
+name VARCHAR(100) NOT NULL, 
+capacity INT NOT NULL CHECK (capacity > 0), 
+type VARCHAR(50) NOT NULL, 
+cus_id INT, 
+FOREIGN KEY (cus_id) REFERENCES customer(cus_id) 
+) 
+-- Create the `register` table 
+CREATE TABLE register ( 
+cus_id INT, 
+event_id INT, 
+PRIMARY KEY (cus_id, event_id), 
+FOREIGN KEY (cus_id) REFERENCES customer(cus_id), 
+FOREIGN KEY (event_id) REFERENCES workshops_events(event_id) 
+) 
